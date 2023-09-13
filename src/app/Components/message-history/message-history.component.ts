@@ -37,6 +37,8 @@ export class MessageHistoryComponent implements OnInit {
 
   
 
+  
+
 
   private beforeTimestamp: string | null = null;
   private isLoading = false;

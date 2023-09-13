@@ -19,7 +19,7 @@ nav{
      left: 0;
     width: 100%;
     margin: auto; 
-    /* z-index: 1; */
+
 }
 nav button{
         width: 100px;
@@ -32,35 +32,19 @@ nav button{
 }
 .dashboard{
     display: flex;
-        
-    /* justify-content: space-between; */
+    
 }
 .userList{
     margin-left: -10px;
-    margin-top: 10px;
-    background-color: rgba(9, 68, 68, 0.8);
     color: white;
     width: 20%;  
-    /* position: fixed; */
-    margin-top: 70px;
-    top: 60px; /* Adjust this value according to your navigation bar's height */
-    left: 0;
-    color: white;
-    width: 20%;
-    height: calc(60vh - 60px); /* Adjust this value to account for the space occupied by the navigation bar */
-     /* Set the z-index higher than the navigation bar */
+    margin-top: 125px;
+    overflow-y: scroll;  
+    background-color: rgb(9, 68, 68);
+    height: calc(87vh - 60px); 
   
 }
 
-form{
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    display: flex;
-    gap: 20px;
-    /* z-index: 1; */
-
-}
 .inputmessage{
     width: 1100px;
     padding: 10px;
@@ -72,30 +56,77 @@ button{
     padding: 10px;
     outline: none;
     border: none;
-    background-color: rgb(9, 68, 68);
-    color: white;
+    background-color: white;
+    color: rgb(9, 68, 68);
     cursor: pointer;
 }
 
 
 .conversation{
-    height: calc(95vh - 100px);
-    /* overflow-y: scroll;   */
-    /* z-index: 2;  */
+    height: calc(80vh - 200px);
     width: 100%;
-    margin-top: 80px;
+    margin-top: 130px;
      
 } 
-.userList {
-    /* position: fixed; */
-    top: 60px; /* Adjust this value according to your navigation bar's height */
-    left: 0;
-    overflow-y: scroll;  
-    background-color: rgb(9, 68, 68);
+
+.search {
+    position: fixed;
+    margin-top: 70px;
+    background-color: rgba(9, 68, 68);
+    color: white;
+    width: 100%;
+    padding: 10px;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+.search input{
+    padding: 8px;
+}
+.searchForm{
+    display: flex;
+    gap: 30px;
+}
+.searchList{
+    margin-top: 125px;
     color: white;
     width: 20%;
-    height: calc(100vh - 60px); /* Adjust this value to account for the space occupied by the navigation bar */
-    /* z-index: 2; Set the z-index higher than the navigation bar */
+    overflow-y: scroll;  
+    background-color: white;
+    height: calc(87vh - 60px); 
+    list-style: none;
+    margin-left: -10px;
+    padding: 10px;
+}
+.close{
+    display: flex;
+    justify-content: right;
+    position: fixed;
+    width: 14%;
+   cursor: pointer;
+   color: rgb(9, 68, 68);
+}
+.messageList{
+    width: 100%;
+    list-style: none;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+}
+.receivedClass{
+    background-color:rgb(9, 68, 68);
+    color: white;
+    margin-top: 5px;
 }
 
-
+.messageBox{
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+} 
+  .sentClass{
+    margin-top: 5px;
+    background-color: #26A700;;
+    color: white;
+}

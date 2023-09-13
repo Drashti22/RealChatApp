@@ -49,5 +49,8 @@ export class MessagesService {
     
     return this.http.get<any>(url);
   }
-
+  searchMessage(keyword: string){
+    console.log("Keyword:" ,keyword)
+    return this.http.get(`${this.baseUrl}search?keyword=${keyword}`)
+  }
 }
