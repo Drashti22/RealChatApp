@@ -1,0 +1,10 @@
+<!-- userlist.component.html -->
+
+<div class="userlist">
+    <li *ngFor="let user of users" class="userName">
+        <a [routerLink]="[{ outlets: { chatOutlet: ['conversation', user.id] } }]">{{ user.name }}</a>
+    </li>
+    
+</div>
+
+    

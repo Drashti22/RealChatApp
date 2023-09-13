@@ -1,0 +1,29 @@
+<div *ngIf="messagesFound == true" class="ConversationHistory" #ConversationHistory [scrollTop]="0"
+    style="overflow-y: scroll;" (scroll)="onScroll($event)">
+    <ul class="messages" *ngFor="let message of messages.slice().reverse()">
+        <li [ngClass]="getMessageClasses(message)" (contextmenu)="openContextMenu($event, message)">
+            {{ message.content }}
+        </li>
+        <li *ngIf="message.isEditing == true " [ngClass]="getMessageClasses(contextMenuMessage)">
+            <form [formGroup]="editForm">
+                <input formControlName="editedMessage">
+                <button type="submit" (click)="onSave()">Save</button>
+                <button (click)="onCancel()">Cancel</button>
+            </form>
+        </li>
+        <div *ngIf="contextMenuVisible" [style.left.px]="contextMenuX" [style.top.px]="contextMenuY"
+            class="contextMenu">
+
+            <li (click)="onEdit()" style="cursor: pointer;">Edit</li>
+            <li (click)="onDelete()" style="cursor: pointer;">Delete</li>
+
+        </div>
+    </ul>
+</div>
+<div *ngIf="messagesFound == false" class="messageNotFound">
+    <p>No Conversation history found. </p>
+</div>
+<form (ngSubmit)="sendMessage()" class="sentForm">
+    <input type="text" name="message" placeholder="send Message" class="inputmessage" [(ngModel)]="newMessage">
+    <button type="submit">Send</button>
+</form>

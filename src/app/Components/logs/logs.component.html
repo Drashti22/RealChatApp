@@ -1,0 +1,53 @@
+<div class="filter">
+    <select [(ngModel)]="selectedTimeframe" (change)="onTimeframeChange()">
+        <option value="Last 5 mins">Last 5 Mins</option>
+        <option value="Last 10 mins">Last 10 Mins</option>
+        <option value="Last 30 mins">Last 30 Mins</option>
+        <option value="Custom">Custom</option>
+    </select>
+
+    <div *ngIf="selectedTimeframe === 'Custom'" >
+        <label for="customStartTime">Custom Start Time:</label>
+        <input [(ngModel)]="customStartTime" id="customStartTime" type="datetime-local" class="form-control"
+            (change)="onCustomDateTimeChange()">  
+
+        <label for="customEndTime">Custom End Time:</label>
+        <input [(ngModel)]="customEndTime" id="customEndTime" type="datetime-local" class="form-control"
+            (change)="onCustomDateTimeChange()">
+    </div>
+
+    <div class="column-toggle"> 
+        <input [(ngModel)]="showIdColumn" id="showIdColumn" type="checkbox" >
+        <label for="showIdColumn">Show ID Column</label>
+        
+        <input [(ngModel)]="showIpAddressColumn" id="showIpAddressColumn" type="checkbox" >
+        <label for="showIpAddressColumn">Show IP Address Column</label>
+        
+        <input [(ngModel)]="showRequestBodyColumn" id="showRequestBodyColumn" type="checkbox" >
+        <label for="showRequestBodyColumn">Show Request Body Column</label>
+        
+        <input [(ngModel)]="showTimeStampColumn" id="showTimeStampColumn" type="checkbox" >
+        <label for="showTimeStampColumn">Show Time Stamp Column</label>
+    </div>
+</div>
+
+
+<table *ngIf="logs.length > 0" class="log-table">
+    <thead>
+        <tr>
+            <th *ngIf="showIdColumn">ID</th>
+            <th *ngIf="showIpAddressColumn">Ip Address</th>
+            <th *ngIf="showRequestBodyColumn">Request Body</th>
+            <th *ngIf="showTimeStampColumn">Time Stamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let log of logs">
+            <td *ngIf="showIdColumn">{{log.id}}</td>
+            <td *ngIf="showIpAddressColumn">{{log.ipAddress}}</td>
+            <td *ngIf="showRequestBodyColumn">{{log.requestBody}}</td>
+            <td *ngIf="showTimeStampColumn">{{log.timeStamp}}</td>
+        </tr>
+    </tbody>
+</table>
+<p *ngIf="logs.length === 0" class="no-logs-message"></p>

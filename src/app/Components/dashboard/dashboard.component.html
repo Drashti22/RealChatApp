@@ -1,0 +1,13 @@
+<div class="main">
+    <nav>
+        <h2>Gossip.com</h2>
+        <button (click)="onLogout()">logout</button>
+    </nav>
+    <div class="dashboard">
+        <div class="userList">
+            <app-userlist></app-userlist>
+        </div>
+        <div class="conversation">
+            <router-outlet name="chatOutlet"></router-outlet>
+        </div>
+    </div>

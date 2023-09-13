@@ -1,0 +1,19 @@
+<div class="login">
+    <div class="main">
+        <h3>Welcome Back</h3>
+        <form action="" [formGroup]="loginForm">
+            <input type="email" placeholder="Email" formControlName="email">
+            <small *ngIf="loginForm.controls['email'].dirty  && loginForm.hasError('required', 'email')"
+                style="color: red;">*Username is required</small>
+            <input type="password" placeholder="Password" formControlName="password">
+            <small *ngIf="loginForm.controls['password'].dirty  && loginForm.hasError('required', 'password')"
+                style="color: red;">*Password is required</small>
+
+
+            <button type="submit" (click)="onSubmit()">Log in</button>
+            <p>Don't have an account ? <span><a [routerLink]="['/signup']">Sign up</a></span></p>
+
+        </form>
+    </div>
+    <p>Terms of use | Privacy Policy</p>
+</div>

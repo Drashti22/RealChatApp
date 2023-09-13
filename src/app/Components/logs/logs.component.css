@@ -1,0 +1,38 @@
+/* External CSS */
+.filter {
+    margin: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
+
+.timeframe-select, .form-control {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.column-toggle {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    /* flex-direction: column; */
+    /* align-items: center; */
+    /* justify-content: center; */
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.log-table th, .log-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+.no-logs-message {
+    text-align: center;
+    color: #777;
+}

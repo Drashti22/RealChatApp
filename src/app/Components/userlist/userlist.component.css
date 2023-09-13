@@ -1,0 +1,53 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+h2{
+    font-family: 'Bricolage Grotesque', sans-serif;
+    color: #26A700; 
+}
+nav{
+    padding: 20px;
+    background-color: #bfe4b4;
+    margin: -10px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+nav button{
+        width: 100px;
+        padding: 10px;
+        outline: none;
+        border: none;
+        background-color: #26A700;
+        color: white;
+        cursor: pointer;
+}
+a{
+    text-align: center; 
+    color: white;
+    list-style: none;
+    cursor: pointer;
+    text-decoration: none;
+
+}
+.user{
+    padding: 15px;
+    width: 20%;
+}
+
+.userlist{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    /* background-color: #26A700; */
+}
+.userName{
+    padding: 10px;
+}
+li{
+    list-style: none;
+}
