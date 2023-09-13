@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -14,6 +14,8 @@ import { DashboardComponent } from './Components/dashboard/dashboard.component';
 import { FormsModule } from '@angular/forms';
 import { LogsComponent } from './Components/logs/logs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
 
 @NgModule({
   declarations: [
@@ -25,19 +27,45 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     DashboardComponent,
     LogsComponent
   ],
+  schemas:[
+    CUSTOM_ELEMENTS_SCHEMA
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
     NgToastModule, 
-    FormsModule, BrowserAnimationsModule
+    FormsModule, BrowserAnimationsModule,
+    BrowserAnimationsModule,
+    SocialLoginModule,
+
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,
     multi:true
-  }],
+  },
+  {
+    provide: 'SocialAuthServiceConfig',
+    useValue: {
+      autoLogin: false,
+      providers: [
+        {
+          id: GoogleLoginProvider.PROVIDER_ID,
+          provider: new GoogleLoginProvider(
+            '414420117584-8ggttrr52sgf1cge36h8argahdv4nkaj.apps.googleusercontent.com', {
+            }
+          )
+        },
+      ],
+      onError: (err) => {
+        console.error(err);
+      }
+    } as SocialAuthServiceConfig
+  }
+
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

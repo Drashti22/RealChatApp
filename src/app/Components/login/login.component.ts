@@ -2,8 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from   '@angular/forms'
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
-import { AuthService } from 'src/app/Services/auth.service';
+import { AuthService, ExternalAuthDto } from 'src/app/Services/auth.service';
+import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
+import * as google from 'google-one-tap';
+import { HttpErrorResponse } from '@angular/common/http';
 
+
+
+declare global {
+  interface Window {
+    onGoogleLibraryLoad: () => void;
+  }
+}
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,12 +23,16 @@ export class LoginComponent implements OnInit {
   type: string = "Password"
   isText: boolean = false;
   loginForm!: FormGroup;
+  showError!: boolean;
+  errorMessage!: string;
   constructor(private fb: FormBuilder,
               private auth: AuthService, 
               private router : Router,
-              private toast: NgToastService){}
+              private toast: NgToastService,
+              ){}
 
   ngOnInit(): void {
+    this.externalLogin()
     this.loginForm = this.fb.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
@@ -66,5 +80,30 @@ export class LoginComponent implements OnInit {
       }
     })
   }
+  externalLogin = () => {
+  this.showError = false; 
+  this.auth.signInWithGoogle();
+  this.auth.extAuthChanged.subscribe(user => {
+    const externalAuth: ExternalAuthDto = {
+      idToken: user.idToken
+    }
+    this.validateExternalAuth(externalAuth);
+  });
+
+  
+}
+private validateExternalAuth(externalAuth: ExternalAuthDto) {
+  this.auth.externalLogin(externalAuth).subscribe({
+    next: (res) => {
+      localStorage.setItem("token", res.token);
+      // console.log('res', res.token);
+      this.router.navigateByUrl('/userlist');
+    },
+    error: (err: HttpErrorResponse) => {
+      this.errorMessage = err.message;
+      this.showError = true;
+    }
+  });
+}
 
 }
