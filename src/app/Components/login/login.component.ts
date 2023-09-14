@@ -6,6 +6,8 @@ import { AuthService, ExternalAuthDto } from 'src/app/Services/auth.service';
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 import * as google from 'google-one-tap';
 import { HttpErrorResponse } from '@angular/common/http';
+import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 
 
@@ -25,19 +27,47 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   showError!: boolean;
   errorMessage!: string;
+    user?: SocialUser;
   constructor(private fb: FormBuilder,
               private auth: AuthService, 
               private router : Router,
               private toast: NgToastService,
+              private authService: SocialAuthService, 
+              private http: HttpClient
+             
               ){}
 
   ngOnInit(): void {
-    this.externalLogin()
     this.loginForm = this.fb.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
     })
+    
+    this.authService.authState.subscribe((user: SocialUser) => {
+      this.user = user;
+      console.log(this.user);
+
+     
+    });
+
   }
+  signInWithGoogle() {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
+    .then(()=>{
+      const idToken = this.user?.idToken;
+      this.http.post<any>('https://localhost:7132/api/User/GoogleAuthenticate', {idToken})
+      .subscribe(
+        (res)=>{
+          console.log(res);
+          this.router.navigate(['dashboard']);
+        },
+        (error)=>{
+          console.log(error)
+        }
+      )
+    });
+  }
+  
   onSubmit(){
     if(this.loginForm.valid){
       console.log(this.loginForm.value)
@@ -82,7 +112,6 @@ export class LoginComponent implements OnInit {
   }
   externalLogin = () => {
   this.showError = false; 
-  this.auth.signInWithGoogle();
   this.auth.extAuthChanged.subscribe(user => {
     const externalAuth: ExternalAuthDto = {
       idToken: user.idToken
