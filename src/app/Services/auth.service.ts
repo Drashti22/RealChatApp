@@ -14,10 +14,8 @@
 
     private baseUrl: string = "https://localhost:7132/api/user/"
     private tokenkey = 'auth_token'
-    private authChangeSub = new Subject<boolean>();
     private extAuthChangeSub = new Subject<SocialUser>();
-    public authChanged = this.authChangeSub.asObservable();
-    public extAuthChanged = this.extAuthChangeSub.asObservable();
+  
 
     constructor(private http: HttpClient, private externalAuthService: SocialAuthService) { 
         this.externalAuthService.authState.subscribe((user) => {
@@ -32,8 +30,6 @@
     login(loginObj:any){
       return this.http.post<any>(`${this.baseUrl}login`, loginObj)
     }
-    
-    
     isLoggedIn(): boolean{
       const token = this.getToken();
       console.log(token)
@@ -59,15 +55,18 @@
         localStorage.setItem('user-Id', id.toString());
       }     
     }
-    // LoginWithGoogle(credentials : string): Observable<any>{
-    //   const header = new HttpHeaders().set('Content-type', 'application/json');
-    //   return this.http.post(`${this.baseUrl}LoginWithGoogle`, JSON.stringify(credentials), {headers: header})
-    // }
     public signInWithGoogle = ()=> {
       this.externalAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
       
     }
     externalLogin(googleUser: ExternalAuthDto): Observable<any> {
       return this.http.post<any>(`https://localhost:7132/api/User/GoogleAuthenticate`, googleUser);
+    }
+    googleAuthenticate(idToken: string): Observable<any> {
+      const googleAuthDto = {
+        idToken: idToken
+      };
+  
+      return this.http.post<any>('https://localhost:7132/api/User/GoogleAuthenticate', googleAuthDto);
     }
   }

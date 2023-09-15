@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, Input, OnInit, SimpleChanges, ViewChild, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { AuthService } from 'src/app/Services/auth.service';
 import { MessagesService } from 'src/app/Services/messages.service';
 
@@ -35,11 +36,6 @@ export class MessageHistoryComponent implements OnInit {
   loggedInUserId = this.auth.getLoggedInUserId();
   messagesFound: boolean = false;
 
-  
-
-  
-
-
   private beforeTimestamp: string | null = null;
   private isLoading = false;
   private isEndOfMessages = false;
@@ -49,10 +45,35 @@ export class MessageHistoryComponent implements OnInit {
     private auth: AuthService,
     private route: ActivatedRoute,
     private form: FormBuilder) { }
-
+    private connection!: HubConnection;
+    
   //get messages
   ngOnInit(): void {
     
+    const localToken = localStorage.getItem('auth_token');
+    this.connection = new HubConnectionBuilder()
+
+      .withUrl(`https://localhost:7132/chat?access_token=${localToken}`)
+      .build();
+
+
+    this.connection.start()
+      .then(() =>
+        console.log('conn start'))
+      .catch(err => {
+        console.log('error in conn')
+      });
+
+    this.connection.on('Broadcast', (message) => {
+      message.id = message.messageID;
+      // console.log(message.messageID);
+      this.messages.push(message);
+      // console.log(message.id);
+      console.log(this.messages);
+      // Scroll to the bottom when user send or receive the mesaage
+      this.scrollToBottom();
+
+    })
     this.route.params.subscribe(params => {
       const userId = params['userId'];
       this.message.receiverId = userId;
@@ -246,14 +267,12 @@ export class MessageHistoryComponent implements OnInit {
     }
   }
 
- 
   scrollToBottom() {
     const messageContainer = document.querySelector('.ConversationHistory');
     if (messageContainer) {
       messageContainer.scrollTop = messageContainer.scrollHeight;
     }
   }
-
   
   loadMessages() {
 

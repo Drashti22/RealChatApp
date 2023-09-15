@@ -71,7 +71,7 @@ button{
 
 .search {
     position: fixed;
-    margin-top: 70px;
+    margin-top: 85px;
     background-color: rgba(9, 68, 68);
     color: white;
     width: 100%;
@@ -87,7 +87,7 @@ button{
     gap: 30px;
 }
 .searchList{
-    margin-top: 125px;
+    margin-top: 140px;
     color: white;
     width: 20%;
     overflow-y: scroll;  

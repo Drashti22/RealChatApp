@@ -3,9 +3,6 @@ import {FormBuilder, FormControl, FormGroup, Validators} from   '@angular/forms'
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import { AuthService, ExternalAuthDto } from 'src/app/Services/auth.service';
-import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
-import * as google from 'google-one-tap';
-import { HttpErrorResponse } from '@angular/common/http';
 import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -41,33 +38,28 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.fb.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
-    })
-    
+    }) 
     this.authService.authState.subscribe((user: SocialUser) => {
       this.user = user;
       console.log(this.user);
-
-     
-    });
-
-  }
-  signInWithGoogle() {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID)
-    .then(()=>{
-      const idToken = this.user?.idToken;
-      this.http.post<any>('https://localhost:7132/api/User/GoogleAuthenticate', {idToken})
-      .subscribe(
-        (res)=>{
-          console.log(res);
-          this.router.navigate(['dashboard']);
-        },
-        (error)=>{
-          console.log(error)
-        }
-      )
+     if(user && user.provider === GoogleLoginProvider.PROVIDER_ID){
+      const idToken = user.idToken;
+      if(idToken){
+        this.auth.googleAuthenticate(idToken).subscribe(
+          (res)=>{
+            console.log(res);
+            this.auth.storeToken(res.token);
+            this.auth.setLoggedInUserId(res.user.id);
+            this.router.navigate(['/dashboard']);
+          },
+          (error)=>{
+            console.log(error)
+          }
+        )
+      }
+     }
     });
   }
-  
   onSubmit(){
     if(this.loginForm.valid){
       console.log(this.loginForm.value)
@@ -83,14 +75,8 @@ export class LoginComponent implements OnInit {
           this.auth.setLoggedInUserId(res.profile.id);
           console.log('Set User ID:', res.profile.id);
           this.router.navigate(['dashboard']);
-        //  console.log(res.message);
-         this.loginForm.reset();
-         
+         this.loginForm.reset(); 
         },
-        // error:(err)=>{
-        //   // alert(err?.error.message);
-        //   this.toast.error({detail: "ERROR", summary:err?.error.message, duration: 2000})
-        // }
       })
     }
     else{
@@ -98,7 +84,7 @@ export class LoginComponent implements OnInit {
       this.validateAllFormFields(this.loginForm);
       alert("Your form is invalid !!")
       //throw the error using toaster
-    }
+    } 
   }
   private validateAllFormFields(formGroup: FormGroup, ){
     Object.keys(formGroup.controls).forEach(field=>{
@@ -110,29 +96,5 @@ export class LoginComponent implements OnInit {
       }
     })
   }
-  externalLogin = () => {
-  this.showError = false; 
-  this.auth.extAuthChanged.subscribe(user => {
-    const externalAuth: ExternalAuthDto = {
-      idToken: user.idToken
-    }
-    this.validateExternalAuth(externalAuth);
-  });
-
-  
-}
-private validateExternalAuth(externalAuth: ExternalAuthDto) {
-  this.auth.externalLogin(externalAuth).subscribe({
-    next: (res) => {
-      localStorage.setItem("token", res.token);
-      // console.log('res', res.token);
-      this.router.navigateByUrl('/userlist');
-    },
-    error: (err: HttpErrorResponse) => {
-      this.errorMessage = err.message;
-      this.showError = true;
-    }
-  });
-}
 
 }

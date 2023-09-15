@@ -49,8 +49,6 @@ export class SignupComponent implements OnInit  {
       this.validateAllFormFields(this.signupForm);
       alert("Your form is invalid !!")
       this.toast.error({detail: "ERROR", summary:"Your form is invalid !!", duration: 2000})
-
-      //throw the error using toaster
     }
   }
   private validateAllFormFields(formGroup: FormGroup){
