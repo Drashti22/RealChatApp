@@ -15,6 +15,7 @@ interface Message {
 
 
 }
+
 @Component({
   selector: 'app-message-history',
   templateUrl: './message-history.component.html',
@@ -32,6 +33,7 @@ export class MessageHistoryComponent implements OnInit {
   contextMenuY = 0;
   contextMenuVisible = false;
   contextMenuMessage: Message | null = null;
+  
 
   loggedInUserId = this.auth.getLoggedInUserId();
   messagesFound: boolean = false;
@@ -39,46 +41,48 @@ export class MessageHistoryComponent implements OnInit {
   private beforeTimestamp: string | null = null;
   private isLoading = false;
   private isEndOfMessages = false;
+  private connection!: HubConnection;
+  messageArray = this.message.messageArray;
 
 
   constructor(private message: MessagesService,
     private auth: AuthService,
     private route: ActivatedRoute,
     private form: FormBuilder) { }
-    private connection!: HubConnection;
     
   //get messages
   ngOnInit(): void {
-    
-    const localToken = localStorage.getItem('auth_token');
-    this.connection = new HubConnectionBuilder()
-
-      .withUrl(`https://localhost:7132/chat?access_token=${localToken}`)
-      .build();
-
-
-    this.connection.start()
-      .then(() =>
-        console.log('conn start'))
-      .catch(err => {
-        console.log('error in conn')
-      });
-
-    this.connection.on('Broadcast', (message) => {
-      message.id = message.messageID;
-      // console.log(message.messageID);
-      this.messages.push(message);
-      // console.log(message.id);
-      console.log(this.messages);
-      // Scroll to the bottom when user send or receive the mesaage
-      this.scrollToBottom();
-
-    })
     this.route.params.subscribe(params => {
       const userId = params['userId'];
       this.message.receiverId = userId;
       this.getMessages();
 
+    })
+    const localToken = localStorage.getItem('auth_token');
+    this.connection = new HubConnectionBuilder()
+
+      .withUrl(`https://localhost:7132/chat/hub?access_token=${localToken}`)
+      .build();
+
+    this.connection.start()
+      .then(() =>
+        console.log('conn start'))
+        
+      .catch(error => {
+        console.log(error)
+      });
+
+    
+      this.connection.on('BroadCast', (message) => {
+        console.log("Inside conncection")
+      message.id = message.messageID;
+      console.log(message.messageID);
+      console.log("Before Push:", this.messageArray);
+      this.messages.push(message);
+      console.log("after Push:", this.messageArray);
+      console.log(message.id);
+      console.log(this.messageArray);
+      this.getMessages();
     })
     this.sendForm = this.form.group({
       message: ['', Validators.required]
@@ -87,10 +91,7 @@ export class MessageHistoryComponent implements OnInit {
       editedMessage: ['', Validators.required]
     })
   }
-
-  
   getMessages() {
-    
       if(this.message.receiverId != null){
         this.message.getConversationHistory(this.message.receiverId).subscribe((res => {
           if (res.messages) {
@@ -102,9 +103,7 @@ export class MessageHistoryComponent implements OnInit {
             // this.scrollToBottom();
             setTimeout(() => {
               this.scrollToBottom();
-            });
-            
-            
+            });   
           }
           else {
             this.messages = [];
@@ -112,9 +111,7 @@ export class MessageHistoryComponent implements OnInit {
           }
           console.log(res)
         }));
-      }
-      
-    
+      }  
   }
   getMessageClasses(message: any): any {
     const loggedInUserId = this.auth.getLoggedInUserId();
@@ -296,9 +293,7 @@ export class MessageHistoryComponent implements OnInit {
           ...msg,
           isEditing: false,
         })).reverse();
-
         if (olderMessages.length > 0) {
-          
           this.messages = [ ...this.messages, ...olderMessages];
           console.log(this.messages)
           this.beforeTimestamp = olderMessages[olderMessages.length - 1].timestamp;
@@ -310,16 +305,13 @@ export class MessageHistoryComponent implements OnInit {
           });
         }
         else {
-          
           this.isEndOfMessages = true;
         }
       }else{
         console.error("response is not an array:", res)
       }
-
         this.isLoading = false;
       });
-  
     }
   }
   @HostListener('scroll', ['$event'])

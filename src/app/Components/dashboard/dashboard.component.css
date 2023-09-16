@@ -65,7 +65,7 @@ button{
 .conversation{
     height: calc(80vh - 200px);
     width: 100%;
-    margin-top: 130px;
+    margin-top: 140px;
      
 } 
 
@@ -76,8 +76,8 @@ button{
     color: white;
     width: 100%;
     padding: 10px;
-    margin-left: -10px;
-    margin-right: -10px;
+    /* margin-left: -10px; */
+    /* margin-right: -10px; */
 }
 .search input{
     padding: 8px;

@@ -3,9 +3,20 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Observable } from 'rxjs';
 
+interface Message {
+  id: number,
+  senderId: string,
+  receiverId: string,
+  content: string,
+  timestamp: string,
+  isEditing: boolean;
+
+
+}
 @Injectable({
   providedIn: 'root'
 })
+
 export class MessagesService {
   private baseUrl: string = "https://localhost:7132/api/Message/"
   constructor(private http: HttpClient) { }
@@ -13,6 +24,7 @@ export class MessagesService {
   selectedUser: any = null;
   receiverId!: string ;
   private chatConnection? : HubConnection;
+  messageArray: Message[]= [] ;
 
   getConversationHistory(userId: string, beforeTimestamp?: string | null): Observable<any> {
     let url = `${this.baseUrl}messages?userId=${userId}`;
