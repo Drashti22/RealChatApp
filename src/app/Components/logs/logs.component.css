@@ -24,12 +24,16 @@
 .log-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .log-table th, .log-table td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ccc;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;    /* Hide overflow content */
+    text-overflow: ellipsis; 
 }
 
 .no-logs-message {

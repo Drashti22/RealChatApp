@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class LogService {
-  private baseUrl: string = "https://localhost:7132/api/"
+  private baseUrl: string = "https://localhost:7132/api/Log/"
   constructor(private http: HttpClient) { }
   
   getLogs(startTime: string, endTime: string){

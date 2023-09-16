@@ -2,8 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from   '@angular/forms'
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
-import { AuthService } from 'src/app/Services/auth.service';
+import { AuthService, ExternalAuthDto } from 'src/app/Services/auth.service';
+import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+
+
+declare global {
+  interface Window {
+    onGoogleLibraryLoad: () => void;
+  }
+}
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,16 +22,43 @@ export class LoginComponent implements OnInit {
   type: string = "Password"
   isText: boolean = false;
   loginForm!: FormGroup;
+  showError!: boolean;
+  errorMessage!: string;
+    user?: SocialUser;
   constructor(private fb: FormBuilder,
               private auth: AuthService, 
               private router : Router,
-              private toast: NgToastService){}
+              private toast: NgToastService,
+              private authService: SocialAuthService, 
+              private http: HttpClient
+             
+              ){}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
-    })
+    }) 
+    this.authService.authState.subscribe((user: SocialUser) => {
+      this.user = user;
+      console.log(this.user);
+     if(user && user.provider === GoogleLoginProvider.PROVIDER_ID){
+      const idToken = user.idToken;
+      if(idToken){
+        this.auth.googleAuthenticate(idToken).subscribe(
+          (res)=>{
+            console.log(res);
+            this.auth.storeToken(res.token);
+            this.auth.setLoggedInUserId(res.user.id);
+            this.router.navigate(['/dashboard']);
+          },
+          (error)=>{
+            console.log(error)
+          }
+        )
+      }
+     }
+    });
   }
   onSubmit(){
     if(this.loginForm.valid){
@@ -39,14 +75,8 @@ export class LoginComponent implements OnInit {
           this.auth.setLoggedInUserId(res.profile.id);
           console.log('Set User ID:', res.profile.id);
           this.router.navigate(['dashboard']);
-        //  console.log(res.message);
-         this.loginForm.reset();
-         
+         this.loginForm.reset(); 
         },
-        // error:(err)=>{
-        //   // alert(err?.error.message);
-        //   this.toast.error({detail: "ERROR", summary:err?.error.message, duration: 2000})
-        // }
       })
     }
     else{
@@ -54,7 +84,7 @@ export class LoginComponent implements OnInit {
       this.validateAllFormFields(this.loginForm);
       alert("Your form is invalid !!")
       //throw the error using toaster
-    }
+    } 
   }
   private validateAllFormFields(formGroup: FormGroup, ){
     Object.keys(formGroup.controls).forEach(field=>{

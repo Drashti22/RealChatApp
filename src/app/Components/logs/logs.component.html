@@ -37,7 +37,7 @@
         <tr>
             <th *ngIf="showIdColumn">ID</th>
             <th *ngIf="showIpAddressColumn">Ip Address</th>
-            <th *ngIf="showRequestBodyColumn">Request Body</th>
+            <th *ngIf="showRequestBodyColumn" >Request Body</th>
             <th *ngIf="showTimeStampColumn">Time Stamp</th>
         </tr>
     </thead>
@@ -45,7 +45,7 @@
         <tr *ngFor="let log of logs">
             <td *ngIf="showIdColumn">{{log.id}}</td>
             <td *ngIf="showIpAddressColumn">{{log.ipAddress}}</td>
-            <td *ngIf="showRequestBodyColumn">{{log.requestBody}}</td>
+            <td *ngIf="showRequestBodyColumn" class="RequestBody">{{log.requestBody}}</td>
             <td *ngIf="showTimeStampColumn">{{log.timeStamp}}</td>
         </tr>
     </tbody>

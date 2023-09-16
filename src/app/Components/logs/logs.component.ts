@@ -8,7 +8,7 @@ import { LogService } from 'src/app/Services/log.service';
   styleUrls: ['./logs.component.css']
 })
 export class LogsComponent implements OnInit{
-  public logs: any = [];
+  public logs: any[] = [];
   public selectedTimeframe: string = 'Last 5 mins';
   public customStartTime: string = '';
   public customEndTime: string = '';
@@ -69,8 +69,9 @@ export class LogsComponent implements OnInit{
         
         const endTime = new Date();
 
-        this.log.getLogs(startTime.toISOString(), endTime.toISOString()).subscribe((res)=>{
+        this.log.getLogs(startTime.toISOString(), endTime.toISOString()).subscribe((res : any[])=>{
           this.logs = res;
+          console.log("gvjhbgjk" ,res)
         });
 
         }

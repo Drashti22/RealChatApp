@@ -12,7 +12,6 @@ import { UserService } from 'src/app/Services/user.service';
 })
 export class UserlistComponent implements OnInit{
   public users:any = [ ];
-  // @Output() openMessageHistory = new EventEmitter<any>();
 constructor(private auth: AuthService, private route: Router, private user: UserService, private message: MessagesService ){}
 
 ngOnInit(){
@@ -25,11 +24,4 @@ ngOnInit(){
   }
   );
 }
-// onUserClick(user: any) {
-//   console.log('Emitting openMessageHistory event for user:', user);
-//   this.message.selectedUser = user;
-//   // this.openMessageHistory.emit(user);
-// }
-
-
 }
