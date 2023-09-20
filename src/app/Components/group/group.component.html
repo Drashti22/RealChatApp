@@ -1,0 +1,12 @@
+<div class="group">
+    <div class="addGroup" (click)="openDialog()">
+       <p> <i class="fa-solid fa-plus"></i>Group</p>
+    </div>
+        <div class="groupList">
+            <li *ngFor="let group of groups" class="groupName">
+                <div class="eachGroup">
+               <a [routerLink]="[{outlets: {chatOutlet: ['conversation','group', group.id.toString()]}}]"> {{group.name}}</a>
+                </div>
+            </li>
+        </div>
+</div>

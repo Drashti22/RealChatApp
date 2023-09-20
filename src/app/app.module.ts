@@ -16,6 +16,11 @@ import { LogsComponent } from './Components/logs/logs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { GroupComponent } from './Components/group/group.component';
+import { DialogBoxComponent } from './Components/dialog-box/dialog-box.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
+
 
 @NgModule({
   declarations: [
@@ -25,7 +30,10 @@ import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
     UserlistComponent,
     MessageHistoryComponent,
     DashboardComponent,
-    LogsComponent
+    LogsComponent,
+    GroupComponent,
+    DialogBoxComponent,
+    
   ],
   schemas:[
     CUSTOM_ELEMENTS_SCHEMA
@@ -39,6 +47,7 @@ import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
     FormsModule, BrowserAnimationsModule,
     BrowserAnimationsModule,
     SocialLoginModule,
+    MatDialogModule
 
   ],
   providers: [{

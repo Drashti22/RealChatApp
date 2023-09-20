@@ -24,6 +24,8 @@ export class DashboardComponent implements OnInit {
   showSearchResults: boolean = false;
   private connection!: HubConnection;
   messages = this.message.messageArray;
+  responseData: any;
+
 
   constructor(private auth: AuthService, 
               private route: Router, 
@@ -37,31 +39,6 @@ export class DashboardComponent implements OnInit {
     this.searchForm = this.form.group({
       search: ['', Validators.required]
     });
-    // const localToken = localStorage.getItem('auth_token');
-    // this.connection = new HubConnectionBuilder()
-
-    //   .withUrl(`https://localhost:7132/chat/hub?access_token=${localToken}`)
-    //   .build();
-
-    // this.connection.start()
-    //   .then(() =>
-    //     console.log('conn start'))
-        
-    //   .catch(error => {
-    //     console.log(error)
-    //   });
-
-    
-    //   this.connection.on('BroadCast', (message) => {
-    //     console.log("Inside conncection")
-    //   message.id = message.messageID;
-    //   console.log(message.messageID);
-    //   console.log("Before Push:", this.messages);
-    //   this.messages.push(message);
-    //   console.log("after Push:", this.messages);
-    //   console.log(message.id);
-    //   console.log(this.messages);
-    // })
   }
   onLogout() {
     this.socialService.signOut();

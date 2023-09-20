@@ -1,0 +1,29 @@
+.addGroup{
+    background-color: white;
+    color: teal;
+    margin-top: 15px;  
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+  
+}
+i{
+    padding: 5px;
+    cursor: pointer;
+}
+li{
+    list-style: none;
+    display: flex;
+    align-items: center ;
+    justify-content: center;
+    flex-direction: column;
+    /* gap: 50px; */
+}
+a{
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+}
+.groupName{
+    padding: 10px;
+}

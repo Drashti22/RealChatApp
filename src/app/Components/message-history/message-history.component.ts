@@ -44,20 +44,29 @@ export class MessageHistoryComponent implements OnInit {
   private connection!: HubConnection;
   messageArray = this.message.messageArray;
 
-
+  targetType?: string | null ;
+  targetId?: string | number | null ;
+  
+  // targetIdString = this.targetId;
   constructor(private message: MessagesService,
     private auth: AuthService,
     private route: ActivatedRoute,
     private form: FormBuilder) { }
     
   //get messages
-  ngOnInit(): void {
+  ngOnInit(): void { 
     this.route.params.subscribe(params => {
-      const userId = params['userId'];
-      this.message.receiverId = userId;
+      this.targetType = params['targetType'];
+      const targetIdString = params['targetId'];
+      if (this.targetType === 'user') {
+        this.targetId = targetIdString; // User ID remains as a string
+      } else if (this.targetType === 'group') {
+        this.targetId = +targetIdString; // Convert to an integer for groups
+      }
       this.getMessages();
-
     })
+
+    
     const localToken = localStorage.getItem('auth_token');
     this.connection = new HubConnectionBuilder()
 
@@ -92,8 +101,10 @@ export class MessageHistoryComponent implements OnInit {
     })
   }
   getMessages() {
-      if(this.message.receiverId != null){
-        this.message.getConversationHistory(this.message.receiverId).subscribe((res => {
+    if(this.targetType === 'user'){
+    const targetIdString: string = String(this.targetId);
+      if(targetIdString != null){
+        this.message.getConversationHistory(targetIdString).subscribe((res => {
           if (res.messages) {
             console.log(res,1)
             const ascendingMessages = res.messages;
@@ -111,7 +122,8 @@ export class MessageHistoryComponent implements OnInit {
           }
           console.log(res)
         }));
-      }  
+      } 
+    } 
   }
   getMessageClasses(message: any): any {
     const loggedInUserId = this.auth.getLoggedInUserId();
@@ -124,14 +136,16 @@ export class MessageHistoryComponent implements OnInit {
 
   //sending messages
   sendMessage() {
-    if (this.message.receiverId && this.newMessage.trim() !== '') {
+    if(this.targetType === 'user'){
+    const targetIdString: string = String(this.targetId);
+    if (targetIdString && this.newMessage.trim() !== '') {
       const loggedInUserId = this.auth.getLoggedInUserId();
       console.log(loggedInUserId)
       if (loggedInUserId !== null) {
         const userId = this.message.receiverId || '-1';
         this.messagesFound = true;
 
-        this.message.sendMessage(loggedInUserId, userId, this.newMessage).subscribe(
+        this.message.sendMessage(loggedInUserId, targetIdString, this.newMessage).subscribe(
           (res: any) => {
             if (this.message.selectedUser) {
               if (!this.message.selectedUser.messages) {
@@ -143,7 +157,7 @@ export class MessageHistoryComponent implements OnInit {
               console.log(this.messagesFound)
 
             }
-            this.message.getConversationHistory(userId).subscribe((res => {
+            this.message.getConversationHistory(targetIdString).subscribe((res => {
               const ascendingMessages = res.messages;
               this.messages = ascendingMessages;
               // this.messages.push(...ascendingMessages);
@@ -165,6 +179,8 @@ export class MessageHistoryComponent implements OnInit {
         console.error('Logged in user ID is null');
       }
     }
+  }
+ 
   }
 
   //open context menu
@@ -203,9 +219,10 @@ export class MessageHistoryComponent implements OnInit {
 
   //edit
   onSave() {
+    if(this.targetType === 'user'){
     if (this.contextMenuMessage !== null && this.contextMenuMessage.id !== null) {
-      const userId = this.message.receiverId;
-      if (userId !== null) {
+      const targetIdString: string = String(this.targetId);
+      if (targetIdString !== null) {
         this.message.editMessage(this.contextMenuMessage.id, this.editForm.value.editedMessage)
           .subscribe(res => {
             console.log(res)
@@ -213,7 +230,7 @@ export class MessageHistoryComponent implements OnInit {
             // this.contextMenuMessage!.isEditing= false;
 
 
-            this.message.getConversationHistory(userId).subscribe((res => {
+            this.message.getConversationHistory(targetIdString).subscribe((res => {
               const ascendingMessages = res.messages;
               this.messages = ascendingMessages;
               // this.messages.push(...ascendingMessages);
@@ -231,6 +248,7 @@ export class MessageHistoryComponent implements OnInit {
       }
     }
   }
+  }
   onCancel() {
     if (this.contextMenuMessage !== null) {
       this.contextMenuMessage.isEditing = false;
@@ -240,11 +258,12 @@ export class MessageHistoryComponent implements OnInit {
 
   //deleting messages
   onDelete() {
+    if(this.targetType === 'user'){
     if (this.contextMenuMessage !== null) {
-      const userId = this.message.receiverId;
-      if (userId !== null) {
+      const targetIdString: string = String(this.targetId);
+      if (targetIdString !== null) {
         this.message.deleteMessage(this.contextMenuMessage.id).subscribe(res => {
-          this.message.getConversationHistory(userId).subscribe((res => {
+          this.message.getConversationHistory(targetIdString).subscribe((res => {
             if (res.messages != null) {
               const ascendingMessages = res.messages;
               this.messages = ascendingMessages;
@@ -262,6 +281,7 @@ export class MessageHistoryComponent implements OnInit {
         })
       }
     }
+  }
   }
 
   scrollToBottom() {

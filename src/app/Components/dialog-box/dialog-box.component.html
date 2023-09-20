@@ -1,0 +1,7 @@
+<div class="dialogBox">
+    <i class="fa-solid fa fa-xmark" (click)="closeDialog()"></i>
+    <form [formGroup]="groupForm" (ngSubmit)="newGroup()">
+        <input type="text" placeholder="Enter a Group Name" formControlName="groupName">
+        <button class="continue" type="Submit">Continue</button>
+    </form>
+</div>

@@ -66,7 +66,7 @@ i{
 
   }
   .sentForm input{
-    width: 970px;
+    width: 900px;
     padding: 10px;
   }
   .sentForm button{
@@ -84,7 +84,7 @@ i{
   }     
   .ConversationHistory{
     min-height: 200px;
-    height: 450px; /* Set a fixed height for the chat container */
+    height: 400px; /* Set a fixed height for the chat container */
     overflow-y: scroll; /* Enable vertical scrolling */
     border: 1px solid #ccc;
   }
