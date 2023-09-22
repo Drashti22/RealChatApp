@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { AuthService } from 'src/app/Services/auth.service';
+import { GroupService } from 'src/app/Services/group.service';
 import { MessagesService } from 'src/app/Services/messages.service';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { UserDialogComponent } from '../user-dialog/user-dialog.component';
 
 interface Message {
   id: number,
@@ -51,7 +54,9 @@ export class MessageHistoryComponent implements OnInit {
   constructor(private message: MessagesService,
     private auth: AuthService,
     private route: ActivatedRoute,
-    private form: FormBuilder) { }
+    private form: FormBuilder,
+    private group: GroupService,
+    public dialog: MatDialog) { }
     
   //get messages
   ngOnInit(): void { 
@@ -124,6 +129,28 @@ export class MessageHistoryComponent implements OnInit {
         }));
       } 
     } 
+    else if(this.targetType === 'group')
+    {
+      if(typeof this.targetId === 'number'){
+        this.group.GetConverSationHistory(this.targetId).subscribe((res=>{
+          const ascendingMessages = res;
+          if(ascendingMessages.length != 0){
+          console.log(res);
+          this.messages = ascendingMessages.reverse();
+          this.messagesFound = true;
+          setTimeout(() => {
+            this.scrollToBottom();
+          });
+        }
+        else{
+            this.messages = [];
+            this.messagesFound = false;
+        }
+      }
+        
+        ))
+      }
+    }
   }
   getMessageClasses(message: any): any {
     const loggedInUserId = this.auth.getLoggedInUserId();
@@ -177,6 +204,26 @@ export class MessageHistoryComponent implements OnInit {
         );
       } else {
         console.error('Logged in user ID is null');
+      }
+    }
+  }
+  else if(this.targetType === 'group')
+  {
+    if(typeof this.targetId === 'number'){
+      if(this.targetId && this.newMessage.trim()  !== '')
+      {
+        const loggedInUserId = this.auth.getLoggedInUserId();
+        console.log(loggedInUserId);
+        if (loggedInUserId !== null) {
+          this.messagesFound = true;
+          this.group.sendMessage( this.targetId, this.newMessage ).subscribe((res)=>{
+            console.log(res);
+
+            this.messagesFound = true;
+            this.newMessage = '';
+            this.getMessages();
+          })
+        }
       }
     }
   }
@@ -282,6 +329,13 @@ export class MessageHistoryComponent implements OnInit {
       }
     }
   }
+  }
+
+  AddMembers(){
+  
+      const dialogConfig: MatDialogConfig = {backdropClass: 'backdropBackground'};
+      this.dialog.open(UserDialogComponent, dialogConfig);
+    
   }
 
   scrollToBottom() {

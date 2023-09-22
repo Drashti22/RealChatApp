@@ -19,6 +19,7 @@ import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import { GroupComponent } from './Components/group/group.component';
 import { DialogBoxComponent } from './Components/dialog-box/dialog-box.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { UserDialogComponent } from './Components/user-dialog/user-dialog.component';
 
 
 
@@ -33,6 +34,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     LogsComponent,
     GroupComponent,
     DialogBoxComponent,
+    UserDialogComponent,
     
   ],
   schemas:[

@@ -15,7 +15,8 @@ export class GroupService {
    }
 
   addGroup(grpObj: any): Observable<any>{
-    return this.http.post<any>(`${this.baseUrl}`, grpObj).pipe(
+    return this.http.post<any>(`${this.baseUrl}`, grpObj)
+    .pipe(
       tap(()=>{
         this.groupAddedSubject.next();
       })
@@ -29,6 +30,16 @@ export class GroupService {
     return this.http.get<any>(`${this.baseUrl}`)
   }
   GetConverSationHistory(groupid: number){
-    return this.http.get<any>(`${this.baseUrl}`)
+    return this.http.get<any>(`${this.baseUrl}/${groupid}/messages`)
+  }
+  sendMessage(groupId: number, content: string){
+    const message = {
+      groupId: groupId,
+      content: content
+    }
+    return this.http.post<any>(`${this.baseUrl}/${groupId}/messages`, message)
+  } 
+  addMembers(groupId: number, groupMembers: string[]){
+    return this.http.post<any>(`${this.baseUrl}/groups/${groupId}/members`, groupMembers)
   }
 }

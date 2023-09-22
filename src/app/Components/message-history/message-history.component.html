@@ -1,5 +1,6 @@
 <div *ngIf="messagesFound == true" class="ConversationHistory" #ConversationHistory [scrollTop]="0"
     style="overflow-y: scroll;" (scroll)="onScroll($event)">
+   
     <ul class="messages" *ngFor="let message of messages.slice().reverse()">
         <li [ngClass]="getMessageClasses(message)" (contextmenu)="openContextMenu($event, message)">
             {{ message.content }}
@@ -19,6 +20,9 @@
 
         </div>
     </ul>
+    <div class="addMember" *ngIf="targetType === 'group'" >
+        <button (click)="AddMembers()">+ Add Members</button>
+       </div>
 </div>
 <div *ngIf="messagesFound == false" class="messageNotFound">
     <p>No Conversation history found. </p>

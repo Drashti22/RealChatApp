@@ -14,7 +14,8 @@ export class GroupComponent implements OnInit{
   ngOnInit(): void {
   
    this.group.GetGroupList().subscribe(res=>{
-    this.groups = res.groups
+    this.groups = res
+    console.log(res);
    },
    (error)=>{
     console.error(error)
@@ -23,7 +24,7 @@ export class GroupComponent implements OnInit{
   
    this.group.groupAdded().subscribe(() => {
     this.group.GetGroupList().subscribe(res=>{
-      this.groups = res.groups
+      this.groups = res
      },
      (error)=>{
       console.error(error)
