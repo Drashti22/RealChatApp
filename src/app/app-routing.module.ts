@@ -14,7 +14,7 @@ const routes: Routes = [
   {path: 'signup', component: SignupComponent},
   {path: 'dashboard', component:DashboardComponent, canActivate: [AuthGuard],
     children:[{
-      path: 'conversation/:userId',
+      path: 'conversation/:targetType/:targetId',
       component: MessageHistoryComponent,
       outlet: 'chatOutlet'
     }]

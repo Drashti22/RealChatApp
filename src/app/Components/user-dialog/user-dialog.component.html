@@ -1,0 +1,14 @@
+<div class="userList">
+    <h3>Select Members</h3>
+    <div class="selectUsers">
+    <li *ngFor="let user of users" class="userName">
+        <input
+          type="checkbox"
+          (change)="toggleUserSelection(user.id)"
+          [checked]="selectedUsers.includes(user.id)"
+        />
+        {{ user.name }}
+    </li>
+    </div>
+    <button (click)="addMembersToGroup(groupId, selectedUsers)">Add</button>
+</div>

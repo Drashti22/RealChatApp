@@ -10,7 +10,9 @@
         </form>
     </div>
     <div class="dashboard">
-        <div class="userList" *ngIf="!showSearchResults">
+
+        <div class="userList" *ngIf="!showSearchResults"> 
+            <app-group></app-group> 
             <app-userlist></app-userlist>
         </div>
         <div class="searchList" *ngIf="showSearchResults">
