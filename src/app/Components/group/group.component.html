@@ -6,7 +6,8 @@
             <li *ngFor="let group of groups" class="groupName">
                 <div class="eachGroup">
                <a [routerLink]="[{outlets: {chatOutlet: ['conversation','group', group.id.toString()]}}]"> {{group.groupName}}</a>
-                </div>
+              
+            </div>
             </li>
         </div>
 </div>

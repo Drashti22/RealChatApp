@@ -1,6 +1,10 @@
+
 <div *ngIf="messagesFound == true" class="ConversationHistory" #ConversationHistory [scrollTop]="0"
     style="overflow-y: scroll;" (scroll)="onScroll($event)">
-   
+    <div class="GroupDetails" *ngIf="targetType === 'group'" >
+        <p> {{ groupDetails.groupName }}</p>
+        <p>{{groupDetails.members}}</p>
+    </div>
     <ul class="messages" *ngFor="let message of messages.slice().reverse()">
         <li [ngClass]="getMessageClasses(message)" (contextmenu)="openContextMenu($event, message)">
             {{ message.content }}
@@ -19,11 +23,13 @@
             <li (click)="onDelete()" style="cursor: pointer;">Delete</li>
 
         </div>
+        <div class="addMember" *ngIf="targetType === 'group'" >
+            <button (click)="AddMembers()">+ Add Members</button>
+        </div>
     </ul>
-    <div class="addMember" *ngIf="targetType === 'group'" >
-        <button (click)="AddMembers()">+ Add Members</button>
-       </div>
 </div>
+
+   
 <div *ngIf="messagesFound == false" class="messageNotFound">
     <p>No Conversation history found. </p>
 </div>

@@ -10,6 +10,10 @@ import { GroupService } from 'src/app/Services/group.service';
 })
 export class GroupComponent implements OnInit{
   public groups: any = []
+  contextMenuX = 0;
+  contextMenuY = 0;
+  contextMenuVisible = false;
+
   constructor(public dialog: MatDialog, public group: GroupService) { }
   ngOnInit(): void {
   
@@ -36,7 +40,13 @@ export class GroupComponent implements OnInit{
       const dialogConfig: MatDialogConfig = {backdropClass: 'backdropBackground'};
       this.dialog.open(DialogBoxComponent, dialogConfig);
     }
-  
+    openContextMenu(event: MouseEvent, selectedGroup: any) {
+      event.preventDefault();
+      this.contextMenuX = event.clientX;
+      this.contextMenuY = event.clientY;
+      this.contextMenuVisible = true;
+      selectedGroup: this.groups
+    }
 }
 
 

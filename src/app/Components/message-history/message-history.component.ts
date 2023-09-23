@@ -31,6 +31,7 @@ export class MessageHistoryComponent implements OnInit {
   // loggedInUserId: string | null = null;
   sendForm: FormGroup | undefined;
   editForm!: FormGroup;
+  groupDetails: any;
 
   contextMenuX = 0;
   contextMenuY = 0;
@@ -104,6 +105,7 @@ export class MessageHistoryComponent implements OnInit {
     this.editForm = this.form.group({
       editedMessage: ['', Validators.required]
     })
+   
   }
   getMessages() {
     if(this.targetType === 'user'){
@@ -141,6 +143,14 @@ export class MessageHistoryComponent implements OnInit {
           setTimeout(() => {
             this.scrollToBottom();
           });
+          if(typeof this.targetId === 'number'){
+            this.group.getGroupInfo(this.targetId).subscribe((res)=>{
+              this.groupDetails = res;
+            },
+            (error)=>{
+              console.error('Error fetching group info:', error);
+            })
+            }
         }
         else{
             this.messages = [];
@@ -332,8 +342,9 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   AddMembers(){
-  
-      const dialogConfig: MatDialogConfig = {backdropClass: 'backdropBackground'};
+      
+      const dialogConfig: MatDialogConfig = {backdropClass: 'backdropBackground', data: { groupId: this.targetId }};
+      console.log(this.targetId);
       this.dialog.open(UserDialogComponent, dialogConfig);
     
   }

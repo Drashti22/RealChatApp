@@ -1,3 +1,4 @@
+
 ul{
     list-style: none;
 }
@@ -91,9 +92,21 @@ i{
   .addMember{
     position: fixed;
     top: 0;
-    margin-top: 605px;
+    margin-top: 607px;
+    margin-left: -45px;
   }
   .addMember button{
     outline: none;
     padding: 7px;
+    background-color: teal;
+    color: white;
+    outline: none;
+    border: none;
+    cursor: pointer;
   }
+  .GroupDetails{
+    background-color: #bfe4b4;
+   padding: 5px;
+   color: #26A700;
+  }
+ 

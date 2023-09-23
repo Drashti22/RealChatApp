@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, tap } from 'rxjs';
+import { AddMemberReqDTO } from '../Components/user-dialog/user-dialog.component';
 
 
 @Injectable({
@@ -39,7 +40,10 @@ export class GroupService {
     }
     return this.http.post<any>(`${this.baseUrl}/${groupId}/messages`, message)
   } 
-  addMembers(groupId: number, groupMembers: string[]){
-    return this.http.post<any>(`${this.baseUrl}/groups/${groupId}/members`, groupMembers)
+  addMembers(groupId: number, requestPayload: AddMemberReqDTO): Observable<any>{
+    return this.http.post<any>(`${this.baseUrl}/groups/${groupId}/members`, requestPayload)
+  }
+  getGroupInfo(groupId: number){
+    return this.http.get<any>(`${this.baseUrl}/${groupId}`)
   }
 }
