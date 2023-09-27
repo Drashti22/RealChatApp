@@ -7,6 +7,7 @@ import { GroupService } from 'src/app/Services/group.service';
 import { MessagesService } from 'src/app/Services/messages.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { UserDialogComponent } from '../user-dialog/user-dialog.component';
+import { NgToastService } from 'ng-angular-popup';
 
 interface Message {
   id: number,
@@ -57,7 +58,9 @@ export class MessageHistoryComponent implements OnInit {
     private route: ActivatedRoute,
     private form: FormBuilder,
     private group: GroupService,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    private toast: NgToastService,
+    private router: Router) { }
     
   //get messages
   ngOnInit(): void { 
@@ -406,6 +409,18 @@ export class MessageHistoryComponent implements OnInit {
     if(element.scrollTop === 0){
       this.loadMessages()
     }
+  }
+
+  deleteGroup(){
+    if(typeof this.targetId === 'number'){
+      this.group.deleteGroup(this.targetId).subscribe((res)=>{
+        console.log(res)
+      }
+      )
+      this.toast.success({detail: "SUCCESS", summary:"Group is deleted successfully", duration:2000});
+      this.router.navigate(['dashboard']);
+    }
+    
   }
 }
 

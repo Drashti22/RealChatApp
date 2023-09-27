@@ -104,9 +104,24 @@ i{
     border: none;
     cursor: pointer;
   }
-  .GroupDetails{
-    background-color: #bfe4b4;
+  .groupName{
+    /* background-color: #bfe4b4; */
    padding: 5px;
    color: #26A700;
+  }
+  .GroupDetails{
+    background-color: #bfe4b4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .GroupDetails button{
+        width: 100px;
+        padding: 10px;
+        outline: none;
+        border: none;
+        background-color: #26A700;
+        color: white;
+        cursor: pointer;
   }
  
