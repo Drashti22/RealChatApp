@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import { GroupService } from 'src/app/Services/group.service';
+import { SharedService } from 'src/app/Services/shared.service';
 import { UserService } from 'src/app/Services/user.service';
 
 export interface AddMemberReqDTO {
@@ -30,6 +31,7 @@ constructor(private user: UserService,
             private route: ActivatedRoute,
             private dialog: MatDialog,
             private toast: NgToastService,
+            private shared: SharedService,
             @Inject(MAT_DIALOG_DATA) private dialogData: any
             ){}
 ngOnInit(): void {
@@ -61,11 +63,16 @@ ngOnInit(): void {
           console.error(error);
         }
       );
+      
     },
     (error) => {
       console.error(error);
     }
+    
   );
+  this.group.groupDetailsChanged.subscribe((res) => {
+    console.log(res)
+  });
   
 }
 toggleUserSelection(userId: string): void {
@@ -91,7 +98,7 @@ toggleUserSelection(userId: string): void {
   }
 
 }
-addMembersToGroup(groupId: number, selectedUserIds: string[]): void {
+manageMembersToGroup(groupId: number, selectedUserIds: string[]): void {
   
   if (!this.groupId) {
     console.error('Group ID is missing.');
@@ -120,9 +127,13 @@ addMembersToGroup(groupId: number, selectedUserIds: string[]): void {
       console.log('Members added to group:', response);
       
       this.toast.success({detail: "SUCCESS", summary:"Members Updated ", duration: 2000});
+      this.shared.setGroupDetails(response); 
+      console.log('Updated Group Details:', response)
+      this.shared.triggerGroupDetailsChanged(); 
     },
   (error)=>{
     console.error('Error adding members to group:', error);
+    this.toast.error({detail: "ERROR", summary:"You cannot remove the admin of the group. ", duration: 2000});
   }
   ); 
   this.dialog.closeAll();

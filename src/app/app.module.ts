@@ -20,6 +20,7 @@ import { GroupComponent } from './Components/group/group.component';
 import { DialogBoxComponent } from './Components/dialog-box/dialog-box.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UserDialogComponent } from './Components/user-dialog/user-dialog.component';
+import { SharedService } from './Services/shared.service';
 
 
 
@@ -52,7 +53,7 @@ import { UserDialogComponent } from './Components/user-dialog/user-dialog.compon
     MatDialogModule
 
   ],
-  providers: [{
+  providers: [SharedService,{
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,
     multi:true
@@ -77,6 +78,8 @@ import { UserDialogComponent } from './Components/user-dialog/user-dialog.compon
   }
 
 ],
-  bootstrap: [AppComponent]
+
+  bootstrap: [AppComponent],
+
 })
 export class AppModule { }

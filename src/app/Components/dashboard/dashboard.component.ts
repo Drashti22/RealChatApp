@@ -1,5 +1,5 @@
 import { SocialAuthService } from '@abacritt/angularx-social-login';
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -12,7 +12,8 @@ interface messageResponse{
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class DashboardComponent implements OnInit {
   public users: any = [];

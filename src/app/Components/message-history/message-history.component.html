@@ -3,11 +3,20 @@
     style="overflow-y: scroll;" (scroll)="onScroll($event)">
     <div class="GroupDetails" *ngIf="targetType === 'group'" >
         <div class="groupName">
-        <p> {{ groupDetails.groupName }}</p>
-        <p>{{groupDetails.members}}</p>
+        <p> {{ groupDetails?.groupName }}</p>
+        <p>{{groupDetails?.members }}</p>
     </div>
         <button (click)="deleteGroup()">Delete</button>   
     </div>
+    <!-- <ng-container *ngIf="(shared.groupDetailsChanged$ | async) as updatedGroupDetails">
+        <div class="GroupDetails" *ngIf="targetType === 'group'" >
+        <div class="groupName">
+        <p> {{ updatedGroupDetails?.groupName }}</p>
+        <p>{{updatedGroupDetails?.members}}</p>
+    </div>
+        <button (click)="deleteGroup()">Delete</button>   
+    </div> 
+    </ng-container> -->
     <ul class="messages" *ngFor="let message of messages.slice().reverse()">
         <li [ngClass]="getMessageClasses(message)" (contextmenu)="openContextMenu($event, message)">
             {{ message.content }}

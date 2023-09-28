@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnInit, SimpleChanges, ViewChild, Renderer2 } from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -8,6 +8,8 @@ import { MessagesService } from 'src/app/Services/messages.service';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { UserDialogComponent } from '../user-dialog/user-dialog.component';
 import { NgToastService } from 'ng-angular-popup';
+import { SharedService } from 'src/app/Services/shared.service';
+import { NgZone } from '@angular/core';
 
 interface Message {
   id: number,
@@ -16,14 +18,13 @@ interface Message {
   content: string,
   timestamp: string,
   isEditing: boolean;
-
-
 }
 
 @Component({
   selector: 'app-message-history',
   templateUrl: './message-history.component.html',
-  styleUrls: ['./message-history.component.css']
+  styleUrls: ['./message-history.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 
 export class MessageHistoryComponent implements OnInit {
@@ -60,7 +61,11 @@ export class MessageHistoryComponent implements OnInit {
     private group: GroupService,
     public dialog: MatDialog,
     private toast: NgToastService,
-    private router: Router) { }
+    private router: Router,
+    private shared: SharedService,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone) {   
+     }
     
   //get messages
   ngOnInit(): void { 
@@ -74,7 +79,38 @@ export class MessageHistoryComponent implements OnInit {
       }
       this.getMessages();
     })
+    if(typeof this.targetId === 'number'){
+      this.group.getGroupInfo(this.targetId).subscribe((res)=>{
 
+        this.groupDetails = res;
+        this.shared.groupDetailsChanged$.subscribe(() => {
+          const updatedGroupDetails = this.shared.getGroupDetails();
+          console.log('groupDetailsChanged$ event received');
+          console.log('Group Details Updated:', updatedGroupDetails);
+          if (updatedGroupDetails) {
+            this.zone.run(()=>{
+              this.groupDetails = updatedGroupDetails;
+              this.cdr.detectChanges();
+            })
+          }
+        });
+      },
+      (error)=>{
+        console.error('Error fetching group info:', error);
+      })
+      }
+  
+    // this.shared.groupDetailsChanged$.subscribe(() => {
+    //   const updatedGroupDetails = this.shared.getGroupDetails();
+    //   console.log('groupDetailsChanged$ event received');
+    //   console.log('Group Details Updated:', updatedGroupDetails);
+    //   if (updatedGroupDetails) {
+    //     this.zone.run(()=>{
+    //       this.groupDetails = updatedGroupDetails;
+    //       this.cdr.detectChanges();
+    //     })
+    //   }
+    // });
     
     const localToken = localStorage.getItem('auth_token');
     this.connection = new HubConnectionBuilder()
@@ -108,7 +144,7 @@ export class MessageHistoryComponent implements OnInit {
     this.editForm = this.form.group({
       editedMessage: ['', Validators.required]
     })
-   
+    console.log('Initial groupDetails:', this.groupDetails);
   }
   getMessages() {
     if(this.targetType === 'user'){
@@ -148,7 +184,19 @@ export class MessageHistoryComponent implements OnInit {
           });
           if(typeof this.targetId === 'number'){
             this.group.getGroupInfo(this.targetId).subscribe((res)=>{
+
               this.groupDetails = res;
+              this.shared.groupDetailsChanged$.subscribe(() => {
+                const updatedGroupDetails = this.shared.getGroupDetails();
+                console.log('groupDetailsChanged$ event received');
+                console.log('Group Details Updated:', updatedGroupDetails);
+                if (updatedGroupDetails) {
+                  this.zone.run(()=>{
+                    this.groupDetails = updatedGroupDetails;
+                    this.cdr.detectChanges();
+                  })
+                }
+              });
             },
             (error)=>{
               console.error('Error fetching group info:', error);
@@ -414,11 +462,25 @@ export class MessageHistoryComponent implements OnInit {
   deleteGroup(){
     if(typeof this.targetId === 'number'){
       this.group.deleteGroup(this.targetId).subscribe((res)=>{
-        console.log(res)
+        // console.log(res);
+        if(res){
+          this.toast.success({detail: "SUCCESS", summary:"Group is deleted successfully", duration:2000});
+      this.router.navigate(['dashboard']);
+        }
+        
+      },
+      (error)=>{
+        if (error.status === 401) {
+          // Unauthorized: Display unauthorized error message
+          this.toast.error({ detail: "ERROR", summary: "You are not authorized to remove this group.", duration: 2000 });
+        } else {
+          // Other error: Display a generic error message or handle it as needed
+          this.toast.error({ detail: "ERROR", summary: "Failed to delete group", duration: 2000 });
+          console.error(error);
+        }
       }
       )
-      this.toast.success({detail: "SUCCESS", summary:"Group is deleted successfully", duration:2000});
-      this.router.navigate(['dashboard']);
+      
     }
     
   }

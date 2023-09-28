@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, Subject, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { AddMemberReqDTO } from '../Components/user-dialog/user-dialog.component';
 interface Member{
   id: string,
@@ -14,6 +14,11 @@ export class GroupService {
   
   private baseUrl: string = "https://localhost:7132/api/Group";
   public groupAddedSubject: Subject<void> = new Subject<void>();
+  public groupDetailsChanged: Subject<void> = new Subject<void>();
+
+  private groupListSubject = new BehaviorSubject<any[]>([]);
+  groupList$: Observable<any[]> = this.groupListSubject.asObservable();
+  private groupDetails: any;
   constructor(private http: HttpClient) {
     
    }
@@ -32,6 +37,13 @@ export class GroupService {
   }
   GetGroupList(){
     return this.http.get<any>(`${this.baseUrl}`)
+  }
+  updateGroupList(groups: any[]) {
+    this.groupListSubject.next(groups);
+  }
+
+  getGroupList(): any[] {
+    return this.groupListSubject.value;
   }
   GetConverSationHistory(groupid: number){
     return this.http.get<any>(`${this.baseUrl}/${groupid}/messages`)
