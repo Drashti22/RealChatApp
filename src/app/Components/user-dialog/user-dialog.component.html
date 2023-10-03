@@ -10,6 +10,12 @@
         {{ user.name }}
     </li>
     </div>
+    <div class="includePreviousChat">
+      <label>
+        Include Previous Chat
+        <input type="checkbox" [(ngModel)]="includePreviousChat" />
+      </label>
+    </div>
     <button (click)="manageMembersToGroup(groupId, selectedUsers)">Manage</button>
 </div>
                                                                           

@@ -40,6 +40,7 @@ export class DashboardComponent implements OnInit {
     this.searchForm = this.form.group({
       search: ['', Validators.required]
     });
+    
   }
   onLogout() {
     this.socialService.signOut();
@@ -70,4 +71,5 @@ export class DashboardComponent implements OnInit {
       'receivedClass': message.senderId !== loggedInUserId
     };
   }
+  
 }

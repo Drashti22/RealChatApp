@@ -9,6 +9,7 @@ import { UserService } from 'src/app/Services/user.service';
 export interface AddMemberReqDTO {
   MembersToAdd: string[];
   MembersToRemove: string[];
+  IncludePreviousChat: boolean; 
 
 }
 interface User{
@@ -26,6 +27,8 @@ export class UserDialogComponent implements OnInit{
   groupId: number = 0;
   initialSelectedUsers!: string[] ;
   wasInitiallySelected: boolean = false;
+  includePreviousChat: boolean = false;
+
 constructor(private user: UserService, 
             private group: GroupService, 
             private route: ActivatedRoute,
@@ -98,6 +101,9 @@ toggleUserSelection(userId: string): void {
   }
 
 }
+toggleIncludePreviousChat(): void {
+  this.includePreviousChat = !this.includePreviousChat;
+}
 manageMembersToGroup(groupId: number, selectedUserIds: string[]): void {
   
   if (!this.groupId) {
@@ -120,6 +126,7 @@ manageMembersToGroup(groupId: number, selectedUserIds: string[]): void {
   const requestPayload: AddMemberReqDTO = {
     MembersToAdd: selectedUserIds,
     MembersToRemove: membersToRemove,
+    IncludePreviousChat: this.includePreviousChat,
   };
   console.log('Add Members - Request Payload:', requestPayload);
   this.group.addMembers(groupId, requestPayload).subscribe(
