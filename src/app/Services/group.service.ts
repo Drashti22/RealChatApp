@@ -46,6 +46,7 @@ export class GroupService {
     return this.groupListSubject.value;
   }
   GetConverSationHistory(groupid: number){
+    
     return this.http.get<any>(`${this.baseUrl}/${groupid}/messages`)
   }
   sendMessage(groupId: number, content: string){

@@ -77,6 +77,7 @@ export class MessageHistoryComponent implements OnInit {
       } else if (this.targetType === 'group') {
         this.targetId = +targetIdString; // Convert to an integer for groups
       }
+      
       this.getMessages();
     })
     if(typeof this.targetId === 'number'){
@@ -173,6 +174,7 @@ export class MessageHistoryComponent implements OnInit {
     else if(this.targetType === 'group')
     {
       if(typeof this.targetId === 'number'){
+       
         this.group.GetConverSationHistory(this.targetId).subscribe((res=>{
           const ascendingMessages = res;
           if(ascendingMessages.length != 0){
@@ -207,8 +209,7 @@ export class MessageHistoryComponent implements OnInit {
             this.messages = [];
             this.messagesFound = false;
         }
-      }
-        
+      }  
         ))
       }
     }

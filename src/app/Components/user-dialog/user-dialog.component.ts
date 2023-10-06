@@ -9,8 +9,7 @@ import { UserService } from 'src/app/Services/user.service';
 export interface AddMemberReqDTO {
   MembersToAdd: string[];
   MembersToRemove: string[];
-  IncludePreviousChat: boolean; 
-
+  includePreviousChat: boolean;
 }
 interface User{
   id: string;
@@ -28,6 +27,7 @@ export class UserDialogComponent implements OnInit{
   initialSelectedUsers!: string[] ;
   wasInitiallySelected: boolean = false;
   includePreviousChat: boolean = false;
+  
 
 constructor(private user: UserService, 
             private group: GroupService, 
@@ -126,7 +126,7 @@ manageMembersToGroup(groupId: number, selectedUserIds: string[]): void {
   const requestPayload: AddMemberReqDTO = {
     MembersToAdd: selectedUserIds,
     MembersToRemove: membersToRemove,
-    IncludePreviousChat: this.includePreviousChat,
+    includePreviousChat: this.includePreviousChat
   };
   console.log('Add Members - Request Payload:', requestPayload);
   this.group.addMembers(groupId, requestPayload).subscribe(
@@ -137,6 +137,7 @@ manageMembersToGroup(groupId: number, selectedUserIds: string[]): void {
       this.shared.setGroupDetails(response); 
       console.log('Updated Group Details:', response)
       this.shared.triggerGroupDetailsChanged(); 
+      this.shared.setAddMembersRequest(requestPayload);
     },
   (error)=>{
     console.error('Error adding members to group:', error);
