@@ -100,18 +100,6 @@ export class MessageHistoryComponent implements OnInit {
         console.error('Error fetching group info:', error);
       })
       }
-  
-    // this.shared.groupDetailsChanged$.subscribe(() => {
-    //   const updatedGroupDetails = this.shared.getGroupDetails();
-    //   console.log('groupDetailsChanged$ event received');
-    //   console.log('Group Details Updated:', updatedGroupDetails);
-    //   if (updatedGroupDetails) {
-    //     this.zone.run(()=>{
-    //       this.groupDetails = updatedGroupDetails;
-    //       this.cdr.detectChanges();
-    //     })
-    //   }
-    // });
     
     const localToken = localStorage.getItem('auth_token');
     this.connection = new HubConnectionBuilder()
@@ -138,7 +126,19 @@ export class MessageHistoryComponent implements OnInit {
       console.log(message.id);
       console.log(this.messageArray);
       this.getMessages();
-    })
+    });
+
+    this.connection.on('GroupMessage', (message) => {
+      console.log("Received Group Message:", message);
+      if (message.groupId === this.targetId) {
+        this.zone.run(() => {
+          this.messages.push(message);
+          this.cdr.detectChanges();
+          this.getMessages(); 
+        });
+      }
+    });
+
     this.sendForm = this.form.group({
       message: ['', Validators.required]
     });

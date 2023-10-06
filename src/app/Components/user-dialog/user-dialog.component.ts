@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { NgToastService } from 'ng-angular-popup';
 import { GroupService } from 'src/app/Services/group.service';
 import { SharedService } from 'src/app/Services/shared.service';
@@ -27,6 +28,7 @@ export class UserDialogComponent implements OnInit{
   initialSelectedUsers!: string[] ;
   wasInitiallySelected: boolean = false;
   includePreviousChat: boolean = false;
+  connection!: HubConnection;
   
 
 constructor(private user: UserService, 
@@ -39,6 +41,31 @@ constructor(private user: UserService,
             ){}
 ngOnInit(): void {
   this.groupId = this.dialogData.groupId
+  const localToken = localStorage.getItem('auth_token');
+  this.connection = new HubConnectionBuilder()
+  .withUrl(`https://localhost:7132/chat/hub?access_token=${localToken}`)
+  .build();
+  this.connection.start()
+      .then(() =>
+        console.log('conn start'))
+        
+      .catch(error => {
+        console.log(error)
+      });
+      console.log('Before connection.on');
+  this.connection.on('GroupMembersUpdated', (groupMembers: string[]) => {
+    try{
+    console.log('Received Group Members Update:', groupMembers);
+
+    console.log(this.groupId, this.selectedUsers);
+    this.manageMembersToGroup(this.groupId, this.selectedUsers)
+    }
+    catch(error){
+      console.error('Error handling GroupMembersUpdated event:', error);
+    }
+  });
+  console.log('after connection.on');
+
 
   this.user.getUsers().subscribe(
     (res) => {
