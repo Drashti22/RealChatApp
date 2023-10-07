@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { NgToastService } from 'ng-angular-popup';
 import { GroupService } from 'src/app/Services/group.service';
 import { SharedService } from 'src/app/Services/shared.service';
@@ -45,27 +45,29 @@ ngOnInit(): void {
   this.connection = new HubConnectionBuilder()
   .withUrl(`https://localhost:7132/chat/hub?access_token=${localToken}`)
   .build();
-  this.connection.start()
-      .then(() =>
-        console.log('conn start'))
-        
-      .catch(error => {
-        console.log(error)
-      });
-      console.log('Before connection.on');
-  this.connection.on('GroupMembersUpdated', (groupMembers: string[]) => {
-    try{
-    console.log('Received Group Members Update:', groupMembers);
+  this.connection.on("GroupMembersUpdated", (groupMembers) => {
+    // Handle updated group members
+    console.log("Group members updated:", groupMembers);
+});
 
-    console.log(this.groupId, this.selectedUsers);
-    this.manageMembersToGroup(this.groupId, this.selectedUsers)
-    }
-    catch(error){
-      console.error('Error handling GroupMembersUpdated event:', error);
-    }
-  });
-  console.log('after connection.on');
-
+this.connection.start()
+    .then(() => {
+        // Join the group (use appropriate group ID)
+        if (this.connection.state === HubConnectionState.Connected) {
+            // Invoke methods on the connection
+            this.connection.invoke("JoinGroup", this.groupId)
+                .then(() => {
+                    console. log("Successfully joined the group.");
+                    this.connection.invoke("GroupMembersUpdated", this.groupId, this.selectedUsers )
+                        .then(() => console.log("Successfully invoked NotifyGroupMembersUpdated"))
+                        .catch((err) => console.error("Error invoking NotifyGroupMembersUpdated:", err));       
+                })
+                .catch((err) => console.error("Error joining the group:", err));
+        } else {
+            console.warn('SignalR connection is not in the connected state.');
+        }
+    })
+    .catch((err) => console.error('Error starting SignalR connection:', err));
 
   this.user.getUsers().subscribe(
     (res) => {
