@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { NgToastService } from 'ng-angular-popup';
+import { connect } from 'rxjs';
 import { GroupService } from 'src/app/Services/group.service';
 import { SharedService } from 'src/app/Services/shared.service';
 import { UserService } from 'src/app/Services/user.service';
@@ -45,29 +46,13 @@ ngOnInit(): void {
   this.connection = new HubConnectionBuilder()
   .withUrl(`https://localhost:7132/chat/hub?access_token=${localToken}`)
   .build();
-  this.connection.on("GroupMembersUpdated", (groupMembers) => {
-    // Handle updated group members
-    console.log("Group members updated:", groupMembers);
-});
+  
+  this.connection.start().catch(error => console.error(error));
 
-this.connection.start()
-    .then(() => {
-        // Join the group (use appropriate group ID)
-        if (this.connection.state === HubConnectionState.Connected) {
-            // Invoke methods on the connection
-            this.connection.invoke("JoinGroup", this.groupId)
-                .then(() => {
-                    console. log("Successfully joined the group.");
-                    this.connection.invoke("GroupMembersUpdated", this.groupId, this.selectedUsers )
-                        .then(() => console.log("Successfully invoked NotifyGroupMembersUpdated"))
-                        .catch((err) => console.error("Error invoking NotifyGroupMembersUpdated:", err));       
-                })
-                .catch((err) => console.error("Error joining the group:", err));
-        } else {
-            console.warn('SignalR connection is not in the connected state.');
-        }
-    })
-    .catch((err) => console.error('Error starting SignalR connection:', err));
+  this.connection.on('ReceiveGroupUpdate', (res)=>{
+    
+  })
+
 
   this.user.getUsers().subscribe(
     (res) => {
@@ -132,6 +117,11 @@ toggleUserSelection(userId: string): void {
 }
 toggleIncludePreviousChat(): void {
   this.includePreviousChat = !this.includePreviousChat;
+}
+updateGroupMembers(groupMembers: any): void {
+  // Update the group members based on the received data
+  console.log("Group members updated:", groupMembers);
+  // You may need to perform additional logic based on your requirements
 }
 manageMembersToGroup(groupId: number, selectedUserIds: string[]): void {
   

@@ -4,13 +4,18 @@ import { DialogBoxComponent } from '../dialog-box/dialog-box.component';
 import { GroupService } from 'src/app/Services/group.service';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 
+interface Group {
+  id: number;
+  groupName: string ;
+  members: string[];
+}
 @Component({
   selector: 'app-group',
   templateUrl: './group.component.html',
   styleUrls: ['./group.component.css']
 })
 export class GroupComponent implements OnInit{
-  public groups: any = []
+  public groups: Group[] = [];
   contextMenuX = 0;
   contextMenuY = 0;
   contextMenuVisible = false;
@@ -23,24 +28,14 @@ export class GroupComponent implements OnInit{
     .withUrl(`https://localhost:7132/chat/hub?access_token=${localToken}`)
     .build();
 
-    this.connection.start()
-    .then(() => {
-      console.log('Connection started.');
-      if (this.connection.state === HubConnectionState.Connected) {
-        this.connection.on('GroupMembersUpdated', (groupId: number, groupMembers: string[]) => {
-          console.log('Received Group Members Update for Group ID:', groupId);
-          console.log('Group Members:', groupMembers);
-          this.updateGroupList();
-      });
-    } else {
-        console.warn('SignalR connection is not in the connected state.');
-    }
-    })
-    .catch(error => {
-      console.error('Error starting SignalR connection:', error);
-    });
+    this.connection.start().catch(error => console.error(error));
 
-  
+    this.connection.on('ReceiveGroupUpdate', (groupId: number) => {
+      // Handle the group update here
+      console.log(`Received group update for groupId: ${groupId}`);
+      this.updateGroupList(); // Call the method to update the group list or do other actions
+    });
+    
    this.group.GetGroupList().subscribe(res=>{
     this.groups = res
     console.log(res);
@@ -49,13 +44,13 @@ export class GroupComponent implements OnInit{
     console.error(error)
    }
    );
-   this.group.groupAdded().subscribe(() => {
-    this.updateGroupList();
-  });
+  //  this.group.groupAdded().subscribe(() => {
+  //   this.updateGroupList();
+  // });
   }
   updateGroupList(): void {
     this.group.GetGroupList().subscribe(
-      res => {
+      res => {  
         this.groups = res;
         this.cdr.detectChanges(); // Manually detect changes to update the view
         console.log('Updated Group List:', res);
@@ -65,6 +60,11 @@ export class GroupComponent implements OnInit{
       }
     );
   }
+  handleGroupMembersUpdated(groupId: number): void {
+    // Handle the group members update for the specific group (e.g., refresh the members list)
+    console.log(`Group members updated for groupId: ${groupId}`);
+  }
+
     openDialog() : void{
       const dialogConfig: MatDialogConfig = {backdropClass: 'backdropBackground'};
       this.dialog.open(DialogBoxComponent, dialogConfig);

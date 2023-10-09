@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { AddMemberReqDTO } from '../Components/user-dialog/user-dialog.component';
+import { HubConnection } from '@microsoft/signalr';
 interface Member{
   id: string,
   name: string
@@ -19,6 +20,7 @@ export class GroupService {
   private groupListSubject = new BehaviorSubject<any[]>([]);
   groupList$: Observable<any[]> = this.groupListSubject.asObservable();
   private groupDetails: any;
+  hubConnection!: HubConnection;
   constructor(private http: HttpClient) {
     
    }
@@ -70,5 +72,9 @@ export class GroupService {
   deleteGroup(groupId: number){
     return this.http.delete<any>(`${this.baseUrl}/${groupId}`)
   }
-
+  onReceiveGroupUpdate(callback: (groupId: number) => void): void {
+   
+      this.hubConnection.on('ReceiveGroupUpdate', callback);
+   
+  }
 }
