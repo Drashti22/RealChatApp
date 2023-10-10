@@ -3,6 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DialogBoxComponent } from '../dialog-box/dialog-box.component';
 import { GroupService } from 'src/app/Services/group.service';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { Router } from '@angular/router';
 
 interface Group {
   id: number;
@@ -21,7 +22,7 @@ export class GroupComponent implements OnInit{
   contextMenuVisible = false;
   connection!: HubConnection;
 
-  constructor(public dialog: MatDialog, public group: GroupService, private cdr: ChangeDetectorRef) { }
+  constructor(public dialog: MatDialog, public group: GroupService, private cdr: ChangeDetectorRef, private router : Router,) { }
   ngOnInit(): void {
     const localToken = localStorage.getItem('auth_token');
   this.connection = new HubConnectionBuilder()
@@ -33,7 +34,8 @@ export class GroupComponent implements OnInit{
     this.connection.on('ReceiveGroupUpdate', (groupId: number) => {
       // Handle the group update here
       console.log(`Received group update for groupId: ${groupId}`);
-      this.updateGroupList(); // Call the method to update the group list or do other actions
+      this.updateGroupList();
+      this.router.navigate(['dashboard']);// Call the method to update the group list or do other actions
     });
     
    this.group.GetGroupList().subscribe(res=>{

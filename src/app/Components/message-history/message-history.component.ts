@@ -138,6 +138,9 @@ export class MessageHistoryComponent implements OnInit {
         });
       }
     });
+    this.connection.on('ReceiveGroupUpdate', (res)=>{
+      
+    })
 
     this.sendForm = this.form.group({
       message: ['', Validators.required]
